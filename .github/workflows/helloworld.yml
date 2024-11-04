@@ -1,15 +1,35 @@
-name: "hello world workflow"
+name: CI/CD Pipeline
 
-#controls when the actions will run. triggers the workflow on push some to master branch or production branch
 on:
   push:
     branches:
-        -master
-        -production
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  hello_world:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-     -  name: "print hello world"
-        run: echo "hello world"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Specify your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy (if needed)
+        if: github.ref == 'refs/heads/main'
+        run: echo "Deploying the project..." #this is my another
